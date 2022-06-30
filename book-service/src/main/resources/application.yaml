@@ -1,0 +1,8 @@
+server:
+  port: 8201
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:8897/cloudstudy
+    username: root
+    password: pswonlyforlocal
