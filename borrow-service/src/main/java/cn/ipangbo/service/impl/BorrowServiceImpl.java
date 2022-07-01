@@ -6,6 +6,8 @@ import cn.ipangbo.entity.User;
 import cn.ipangbo.entity.UserBorrowDetailVO;
 import cn.ipangbo.mapper.BorrowMapper;
 import cn.ipangbo.service.BorrowService;
+import cn.ipangbo.service.client.BookClient;
+import cn.ipangbo.service.client.UserClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,17 +21,20 @@ public class BorrowServiceImpl implements BorrowService {
     BorrowMapper borrowMapper;
 
     @Resource
-    RestTemplate template;
+    UserClient userClient;
+
+    @Resource
+    BookClient bookClient;
 
     @Override
     public UserBorrowDetailVO getUserBorrowDetailByUid(int uid) {
         List<Borrow> borrows = borrowMapper.getBorrowsByUid(uid);
 
-        User user = template.getForObject("http://userservice/user/" + uid, User.class);
+        User user = userClient.findUserById(uid);
 
         List<Book> bookList = borrows
                 .stream()
-                .map(borrow -> template.getForObject("http://bookservice/book/"+borrow.getBid(), Book.class))
+                .map(borrow -> bookClient.findBookById(borrow.getBid()))
                 .collect(Collectors.toList());
 
         return new UserBorrowDetailVO(user, bookList);
