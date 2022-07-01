@@ -17,16 +17,9 @@ public class BorrowController {
     @Resource
     BorrowService borrowService;
 
-    @HystrixCommand(fallbackMethod = "onError")
     @GetMapping("/borrow/{uid}")
     UserBorrowDetailVO findUserBorrows(@PathVariable int uid) {
         return borrowService.getUserBorrowDetailByUid(uid);
-    }
-
-    UserBorrowDetailVO onError(int uid) {
-        // 原先的500错误页面现在变成了服务降级的数据
-        log.info("服务熔断，执行了补救措施");
-        return new UserBorrowDetailVO(null, Collections.emptyList());
     }
 
 }
